@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="screen_padding">16dp</dimen>
+    <dimen name="card_margin">8dp</dimen>
+    <dimen name="text_size_h1">24sp</dimen>
+    <dimen name="text_size_h2">18sp</dimen>
+    <dimen name="logo_size">100dp</dimen>
+    <dimen name="content_horizontal_margin">24dp</dimen>
+</resources>

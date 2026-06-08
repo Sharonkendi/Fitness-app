@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Theme Colors -->
+    <color name="primaryColor">#4CAF50</color>
+    <color name="primaryVariant">#388E3C</color>
+    <color name="secondaryColor">#FFC107</color>
+    <color name="secondaryContainer">#E8F5E9</color>
+    <color name="surfaceVariant">#EEEEEE</color>
+
+    <!-- Background and Surface -->
+    <color name="backgroundColor">#F5F5F5</color>
+    <color name="surfaceColor">#FFFFFF</color>
+
+    <!-- Text Colors -->
+    <color name="textColorPrimary">#212121</color>
+    <color name="textColorSecondary">#757575</color>
+
+    <color name="accentColor">#FF4081</color>
+
+    <!-- Specific Fitness Colors -->
+    <color name="waterBlue">#2196F3</color>
+    <color name="calorieOrange">#FF9800</color>
+    <color name="workoutPurple">#9C27B0</color>
+    <color name="sleepIndigo">#3F51B5</color>
+</resources>

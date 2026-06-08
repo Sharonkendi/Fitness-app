@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="@color/backgroundColor">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="@dimen/screen_padding">
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/glLeft"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_begin="@dimen/content_horizontal_margin" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/glRight"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_end="@dimen/content_horizontal_margin" />
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Weekly Goals"
+            android:textSize="@dimen/text_size_h1"
+            android:textStyle="bold"
+            android:textColor="@color/primaryColor"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="@id/glLeft" />
+
+        <LinearLayout
+            android:id="@+id/goalsContainer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="24dp"
+            app:layout_constraintTop_toBottomOf="@id/tvTitle"
+            app:layout_constraintStart_toStartOf="@id/glLeft"
+            app:layout_constraintEnd_toEndOf="@id/glRight">
+
+            <CheckBox
+                android:id="@+id/cbMon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Monday: 5km Run"
+                android:buttonTint="@color/primaryColor"
+                android:checked="true" />
+            <CheckBox
+                android:id="@+id/cbTue"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Tuesday: Strength Training"
+                android:buttonTint="@color/primaryColor"
+                android:checked="true" />
+            <CheckBox
+                android:id="@+id/cbWed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Wednesday: Yoga"
+                android:buttonTint="@color/primaryColor" />
+            <CheckBox
+                android:id="@+id/cbThu"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Thursday: 10k Steps"
+                android:buttonTint="@color/primaryColor" />
+            <CheckBox
+                android:id="@+id/cbFri"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Friday: HIIT"
+                android:buttonTint="@color/primaryColor" />
+            <CheckBox
+                android:id="@+id/cbSat"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Saturday: Rest Day"
+                android:buttonTint="@color/primaryColor" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Progress Tracking"
+                android:textSize="@dimen/text_size_h2"
+                android:textStyle="bold"
+                android:layout_marginTop="24dp"
+                android:layout_marginBottom="8dp" />
+
+            <ProgressBar
+                android:id="@+id/pbGoals"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="6"
+                android:progress="2"
+                android:progressTint="@color/primaryColor" />
+
+            <TextView
+                android:id="@+id/tvProgressPercent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="33% Completed"
+                android:layout_gravity="center"
+                android:layout_marginTop="8dp" />
+
+        </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

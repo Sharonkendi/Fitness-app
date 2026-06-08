@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark Theme Overrides -->
+    <color name="primaryColor">#81C784</color>
+    <color name="primaryVariant">#2E7D32</color>
+    <color name="secondaryColor">#FFD54F</color>
+    <color name="secondaryContainer">#2E7D32</color>
+    <color name="surfaceVariant">#2C2C2C</color>
+    <color name="backgroundColor">#121212</color>
+    <color name="surfaceColor">#1E1E1E</color>
+    <color name="textColorPrimary">#FFFFFF</color>
+    <color name="textColorSecondary">#B0B0B0</color>
+
+    <!-- Adjust fitness colors for dark mode visibility if needed -->
+    <color name="waterBlue">#64B5F6</color>
+    <color name="calorieOrange">#FFB74D</color>
+    <color name="workoutPurple">#BA68C8</color>
+    <color name="sleepIndigo">#7986CB</color>
+</resources>
