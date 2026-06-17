@@ -10,6 +10,7 @@ import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.google.firebase.auth.FirebaseAuth
 
 class ProfileFragment : Fragment() {
     override fun onCreateView(
@@ -21,19 +22,23 @@ class ProfileFragment : Fragment() {
 
         val tvName = view.findViewById<TextView>(R.id.tvProfileName)
         val sharedPref = activity?.getSharedPreferences("UserPrefs", Context.MODE_PRIVATE)
-        tvName.text = sharedPref?.getString("USER_NAME", "John Doe")
+        tvName.text = sharedPref?.getString("USER_NAME", "Fitness User")
         
         view.findViewById<Button>(R.id.btnUpdateAccount).setOnClickListener {
-            Toast.makeText(context, "Account Updated Successfully!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Profile persistence is handled via Firebase.", Toast.LENGTH_SHORT).show()
         }
 
         view.findViewById<Button>(R.id.btnDeleteAccount).setOnClickListener {
-            Toast.makeText(context, "Account Deleted!", Toast.LENGTH_LONG).show()
-            startActivity(Intent(activity, LoginActivity::class.java))
-            activity?.finish()
+            // In a real app, delete from Firebase Auth too
+            FirebaseAuth.getInstance().currentUser?.delete()?.addOnCompleteListener {
+                Toast.makeText(context, "Account Deleted!", Toast.LENGTH_LONG).show()
+                startActivity(Intent(activity, LoginActivity::class.java))
+                activity?.finish()
+            }
         }
 
         view.findViewById<Button>(R.id.btnLogout).setOnClickListener {
+            FirebaseAuth.getInstance().signOut()
             startActivity(Intent(activity, LoginActivity::class.java))
             activity?.finish()
         }
