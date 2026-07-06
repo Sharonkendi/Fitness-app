@@ -6,15 +6,16 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import androidx.lifecycle.lifecycleScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class RegisterActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
+    private val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,11 +57,16 @@ class RegisterActivity : AppCompatActivity() {
                 auth.createUserWithEmailAndPassword(email, password)
                     .addOnCompleteListener(this@RegisterActivity) { task ->
                         if (task.isSuccessful) {
-                            // Save name to SharedPreferences
-                            val sharedPref = getSharedPreferences("UserPrefs", MODE_PRIVATE)
-                            sharedPref.edit {
-                                putString("USER_NAME", username)
-                            }
+                            val user = auth.currentUser
+                            
+                            // Create initial profile in Firestore
+                            val profile = UserAccount(
+                                uid = user?.uid ?: "",
+                                fullName = username,
+                                email = email
+                            )
+                            db.collection("users").document(profile.uid).set(profile)
+
                             Toast.makeText(this@RegisterActivity, "Registration Successful!", Toast.LENGTH_SHORT).show()
                             finish()
                         } else {

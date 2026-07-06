@@ -9,4 +9,10 @@
     <string name="calorie_needs">Daily Calorie Needs: %.0f kcal</string>
     <string name="water_amount_format">%1$d ml / %2$d ml</string>
     <string name="sleep_duration_format">%1$dh %2$dm</string>
+    <string name="qr_detected_format">QR Detected: %1$s</string>
+    <string name="photo_location_format">Photo taken at: %1$.4f, %2$.4f</string>
+    <string name="location_permission_denied">Location permission not granted</string>
+    <string name="location_unavailable">Location unavailable</string>
+    <string name="heart_rate_format">%1$d bpm</string>
+    <string name="calories_format">%.1f kcal</string>
 </resources>

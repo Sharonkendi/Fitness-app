@@ -12,7 +12,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.fitnessapp"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
@@ -47,6 +47,19 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     androidTestImplementation(libs.androidx.junit)
-    implementation("com.google.firebase:firebase-database")
+    implementation(libs.androidx.biometric)
+    implementation(libs.play.services.location)
+    implementation(libs.androidx.camera.core)
+    implementation(libs.androidx.camera.camera2)
+    implementation(libs.androidx.camera.lifecycle)
+    implementation(libs.androidx.camera.view)
+    implementation(libs.androidx.security.crypto)
+    implementation(libs.firebase.storage)
+    implementation(libs.play.services.maps)
+    implementation(libs.androidx.health.connect)
+    implementation(libs.androidx.work.runtime)
+    implementation(libs.mlkit.barcode.scanning)
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    implementation("com.github.bumptech.glide:glide:4.16.0")
 }
 

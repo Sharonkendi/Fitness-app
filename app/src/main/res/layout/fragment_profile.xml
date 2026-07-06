@@ -42,7 +42,7 @@
             android:id="@+id/tvProfileName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="John Doe"
+            android:text="Sharon Kendi"
             android:textSize="22sp"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
@@ -54,10 +54,21 @@
             android:id="@+id/tvProfileEmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="john.doe@example.com"
+            android:text="sharonkendi55@gmail.com"
             android:textColor="@color/textColorSecondary"
             android:layout_marginTop="4dp"
             app:layout_constraintTop_toBottomOf="@id/tvProfileName"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPictureLocation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="12sp"
+            android:textColor="@color/textColorSecondary"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/tvProfileEmail"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
 
@@ -68,19 +79,7 @@
             android:text="Update Account"
             style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_marginTop="32dp"
-            app:layout_constraintTop_toBottomOf="@id/tvProfileEmail"
-            app:layout_constraintStart_toStartOf="@id/glLeft"
-            app:layout_constraintEnd_toEndOf="@id/glRight" />
-
-        <Button
-            android:id="@+id/btnDeleteAccount"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="Delete Account"
-            android:textColor="@android:color/holo_red_dark"
-            style="@style/Widget.Material3.Button.TextButton"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@id/btnUpdateAccount"
+            app:layout_constraintTop_toBottomOf="@id/tvPictureLocation"
             app:layout_constraintStart_toStartOf="@id/glLeft"
             app:layout_constraintEnd_toEndOf="@id/glRight" />
 
@@ -92,6 +91,29 @@
             android:backgroundTint="@color/accentColor"
             android:textColor="@color/white"
             android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/btnUpdateAccount"
+            app:layout_constraintStart_toStartOf="@id/glLeft"
+            app:layout_constraintEnd_toEndOf="@id/glRight" />
+
+        <Button
+            android:id="@+id/btnDeleteAccount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Delete Account"
+            android:textColor="@android:color/holo_red_dark"
+            style="@style/Widget.Material3.Button.TextButton"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/btnLogout"
+            app:layout_constraintStart_toStartOf="@id/glLeft"
+            app:layout_constraintEnd_toEndOf="@id/glRight" />
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="App &amp; Security Settings"
+            style="@style/Widget.Material3.Button.TonalButton"
+            android:layout_marginTop="8dp"
             app:layout_constraintTop_toBottomOf="@id/btnDeleteAccount"
             app:layout_constraintStart_toStartOf="@id/glLeft"
             app:layout_constraintEnd_toEndOf="@id/glRight" />

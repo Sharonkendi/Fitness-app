@@ -9,35 +9,30 @@ import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class GoalsFragment : Fragment() {
+class GoalsActivity : AppCompatActivity() {
     private val db = FirebaseFirestore.getInstance()
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?,
-    ): View? {
-        val view = inflater.inflate(R.layout.activity_goals, container, false)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_goals)
 
-        val pbOverall = view.findViewById<ProgressBar>(R.id.pbOverall)
-        val tvProgress = view.findViewById<TextView>(R.id.tvProgressText)
-        val rvBadges = view.findViewById<RecyclerView>(R.id.rvBadges)
-        val btnSetGoal = view.findViewById<Button>(R.id.btnSetNewGoal)
+        val pbOverall = findViewById<ProgressBar>(R.id.pbOverall)
+        val tvProgress = findViewById<TextView>(R.id.tvProgressText)
+        val rvBadges = findViewById<RecyclerView>(R.id.rvBadges)
+        val btnSetGoal = findViewById<Button>(R.id.btnSetNewGoal)
 
         loadProgress(pbOverall, tvProgress)
         loadBadges(rvBadges)
 
         btnSetGoal.setOnClickListener {
-            Toast.makeText(context, "Goal setting coming soon!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Goal setting coming soon!", Toast.LENGTH_SHORT).show()
         }
-
-        return view
     }
 
     private fun loadProgress(pb: ProgressBar, tv: TextView) {
@@ -49,9 +44,6 @@ class GoalsFragment : Fragment() {
                 val percent = (completed * 100 / total).toInt()
                 pb.progress = percent
                 tv.text = "$percent% of your goals completed"
-            } else {
-                pb.progress = 0
-                tv.text = "Start your first goal today!"
             }
         }
     }

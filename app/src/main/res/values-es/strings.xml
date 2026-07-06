@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">App de Fitness</string>
+    <string name="welcome_message">¡Bienvenido, %1$s!</string>
+    <string name="recommended_plan">Basado en sus datos, recomendamos:\n%1$s</string>
+    <string name="fill_fields">Por favor, complete el peso y la altura</string>
+    <string name="progress_completed">%1$d%% Completado</string>
+    <string name="qr_detected_format">QR Detectado: %1$s</string>
+    <string name="photo_location_format">Foto tomada en: %1$.4f, %2$.4f</string>
+    <string name="location_permission_denied">Permiso de ubicación denegado</string>
+    <string name="location_unavailable">Ubicación no disponible</string>
+</resources>
