@@ -1,5 +1,6 @@
 package com.example.fitnessapp
 
+import android.content.Intent
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.pdf.PdfDocument
@@ -9,16 +10,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.SearchView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import android.content.Intent
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -27,7 +29,11 @@ import java.util.*
 class HistoryActivity : AppCompatActivity() {
 
     private lateinit var rvHistory: RecyclerView
+    private lateinit var pbHistory: ProgressBar
+    private lateinit var searchView: SearchView
+    
     private val historyList = mutableListOf<HistoryItem>()
+    private val filteredList = mutableListOf<HistoryItem>()
     private lateinit var adapter: HistoryAdapter
     private val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -36,8 +42,11 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_history)
 
         rvHistory = findViewById(R.id.rvHistory)
+        pbHistory = findViewById(R.id.pbHistory)
+        searchView = findViewById(R.id.searchView)
+        
         rvHistory.layoutManager = LinearLayoutManager(this)
-        adapter = HistoryAdapter(historyList)
+        adapter = HistoryAdapter(filteredList)
         rvHistory.adapter = adapter
 
         findViewById<Button>(R.id.btnExportPdf).setOnClickListener {
@@ -48,7 +57,40 @@ class HistoryActivity : AppCompatActivity() {
             shareHistory()
         }
 
+        setupSearchView()
         loadAllHistoryFromFirestore()
+    }
+
+    private fun setupSearchView() {
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                filterHistory(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+                filterHistory(newText)
+                return true
+            }
+        })
+    }
+
+    private fun filterHistory(query: String?) {
+        filteredList.clear()
+        if (query.isNullOrEmpty()) {
+            filteredList.addAll(historyList)
+        } else {
+            val lowerCaseQuery = query.lowercase(Locale.getDefault())
+            for (item in historyList) {
+                if (item.type.lowercase().contains(lowerCaseQuery) ||
+                    item.mainInfo.lowercase().contains(lowerCaseQuery) ||
+                    item.subInfo.lowercase().contains(lowerCaseQuery)
+                ) {
+                    filteredList.add(item)
+                }
+            }
+        }
+        adapter.notifyDataSetChanged()
     }
 
     private fun shareHistory() {
@@ -63,12 +105,16 @@ class HistoryActivity : AppCompatActivity() {
     private fun loadAllHistoryFromFirestore() {
         if (userId == null) return
         val db = FirebaseFirestore.getInstance()
+        pbHistory.visibility = View.VISIBLE
 
         // Fetch Workouts
         db.collection("workouts").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    pbHistory.visibility = View.GONE
+                    return@addSnapshotListener
+                }
                 val workoutItems = snapshots?.mapNotNull { ds ->
                     val plan = ds.getString("plan") ?: ""
                     val weight = ds.getString("weight") ?: ""
@@ -83,7 +129,10 @@ class HistoryActivity : AppCompatActivity() {
         db.collection("sleep_history").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    pbHistory.visibility = View.GONE
+                    return@addSnapshotListener
+                }
                 val sleepItems = snapshots?.mapNotNull { ds ->
                     val duration = ds.getString("duration") ?: ""
                     val time = ds.getLong("timestamp") ?: 0L
@@ -96,9 +145,12 @@ class HistoryActivity : AppCompatActivity() {
         db.collection("steps_history").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    pbHistory.visibility = View.GONE
+                    return@addSnapshotListener
+                }
                 val stepItems = snapshots?.mapNotNull { ds ->
-                    val steps = ds.getString("steps") ?: ""
+                    val steps = ds.get("steps")?.toString() ?: ""
                     val time = ds.getLong("timestamp") ?: 0L
                     HistoryItem("STEPS", "$steps Steps", "Daily Movement", time)
                 } ?: emptyList()
@@ -107,7 +159,11 @@ class HistoryActivity : AppCompatActivity() {
 
         // Fetch Water
         db.collection("water_tracker").document(userId).addSnapshotListener { snapshot, e ->
-            if (e != null || snapshot == null || !snapshot.exists()) return@addSnapshotListener
+            if (e != null) {
+                pbHistory.visibility = View.GONE
+                return@addSnapshotListener
+            }
+            if (snapshot == null || !snapshot.exists()) return@addSnapshotListener
             val current = snapshot.getLong("current") ?: 0
             val target = snapshot.getLong("target") ?: 0
             val time = snapshot.getLong("timestamp") ?: 0L
@@ -121,7 +177,10 @@ class HistoryActivity : AppCompatActivity() {
         db.collection("bmi_history").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    pbHistory.visibility = View.GONE
+                    return@addSnapshotListener
+                }
                 val bmiItems = snapshots?.mapNotNull { ds ->
                     val weight = ds.getString("weight") ?: ""
                     val bmi = ds.getString("bmi") ?: ""
@@ -130,18 +189,22 @@ class HistoryActivity : AppCompatActivity() {
                 } ?: emptyList()
                 updateHistoryList("BMI", bmiItems)
             }
-
+            
         // Fetch Cycle
         db.collection("cycle_history").document(userId).collection("entries")
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshots, e ->
-                if (e != null) return@addSnapshotListener
+                if (e != null) {
+                    pbHistory.visibility = View.GONE
+                    return@addSnapshotListener
+                }
                 val cycleItems = snapshots?.mapNotNull { ds ->
                     val length = ds.getLong("cycleLength") ?: 28L
                     val time = ds.getLong("timestamp") ?: 0L
                     HistoryItem("CYCLE", "$length Day Cycle", "Last Period Logged", time)
                 } ?: emptyList()
                 updateHistoryList("CYCLE", cycleItems)
+                pbHistory.visibility = View.GONE
             }
     }
 
@@ -149,7 +212,7 @@ class HistoryActivity : AppCompatActivity() {
         historyList.removeAll { it.type == type }
         historyList.addAll(newItems)
         historyList.sortByDescending { it.timestamp }
-        adapter.notifyDataSetChanged()
+        filterHistory(searchView.query.toString())
         
         // Check for achievements when history updates
         FitnessRewardsManager.checkAchievements(this)
@@ -220,6 +283,7 @@ class HistoryActivity : AppCompatActivity() {
                 "WATER" -> R.color.waterBlue
                 "STEPS" -> R.color.accentColor
                 "BMI" -> R.color.primaryColor
+                "CYCLE" -> R.color.workoutPurple
                 else -> R.color.primaryColor
             }
             holder.tvType.setTextColor(ContextCompat.getColor(holder.itemView.context, colorRes))

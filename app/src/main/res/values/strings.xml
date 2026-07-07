@@ -15,4 +15,5 @@
     <string name="location_unavailable">Location unavailable</string>
     <string name="heart_rate_format">%1$d bpm</string>
     <string name="calories_format">%.1f kcal</string>
+    <string name="nutrition_for_format">Nutrition for %1$s</string>
 </resources>

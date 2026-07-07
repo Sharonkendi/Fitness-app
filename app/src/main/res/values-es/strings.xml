@@ -8,4 +8,5 @@
     <string name="photo_location_format">Foto tomada en: %1$.4f, %2$.4f</string>
     <string name="location_permission_denied">Permiso de ubicación denegado</string>
     <string name="location_unavailable">Ubicación no disponible</string>
+    <string name="nutrition_for_format">Nutrición para %1$s</string>
 </resources>

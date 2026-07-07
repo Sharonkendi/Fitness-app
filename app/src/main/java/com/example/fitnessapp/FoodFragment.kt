@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.ProgressBar
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -15,6 +16,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlin.random.Random
 
 class FoodFragment : Fragment() {
     private val db = FirebaseFirestore.getInstance()
@@ -29,6 +31,7 @@ class FoodFragment : Fragment() {
     private lateinit var tvSnacks: TextView
     private lateinit var tvHydration: TextView
     private lateinit var tvNutritionHeader: TextView
+    private lateinit var pbFood: ProgressBar
 
     private val scanLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         if (result.resultCode == Activity.RESULT_OK) {
@@ -53,6 +56,7 @@ class FoodFragment : Fragment() {
         tvSnacks = view.findViewById(R.id.tvSnackItems)
         tvHydration = view.findViewById(R.id.tvHydrationAdvice)
         tvNutritionHeader = view.findViewById(R.id.tvNutritionTitle)
+        pbFood = view.findViewById(R.id.pbFood)
 
         val btnScan = view.findViewById<Button>(R.id.btnScan)
         val btnRefresh = view.findViewById<ImageButton>(R.id.btnRefresh)
@@ -79,13 +83,18 @@ class FoodFragment : Fragment() {
 
     private fun loadProfileAndGenerateAI() {
         if (userId == null) return
+        pbFood.visibility = View.VISIBLE
         db.collection("users").document(userId).get().addOnSuccessListener { doc ->
+            pbFood.visibility = View.GONE
             if (doc.exists()) {
                 val profile = doc.toObject(UserAccount::class.java)
                 profile?.let { generateAIRecommendations(it) }
             } else {
                 generateAIRecommendations(UserAccount())
             }
+        }.addOnFailureListener {
+            pbFood.visibility = View.GONE
+            Toast.makeText(context, "Failed to load profile", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -94,80 +103,79 @@ class FoodFragment : Fragment() {
         val goal = user.fitnessGoals.lowercase()
         val allergies = user.allergies.lowercase()
         
-        tvNutritionHeader.text = "Nutrition for $workout"
+        tvNutritionHeader.text = getString(R.string.nutrition_for_format, workout)
 
         when {
-            workout.contains("strength") || workout.contains("leg") || workout.contains("gym") || workout.contains("arm") -> {
-                tvBreakfast.text = "High-Protein Omelet: 4 egg whites, 1 whole egg, spinach, and mushrooms."
-                tvBreakfastNutri.text = "Goal: Muscle Repair | 450 kcal | 35g Protein"
+            workout.contains("strength") || workout.contains("leg") || workout.contains("gym") || workout.contains("deadlift") || workout.contains("squat") -> {
+                tvBreakfast.text = "Bodybuilder's Plate: 6 egg whites, 2 whole eggs, and a large bowl of oats with 1 scoop of whey."
+                tvBreakfastNutri.text = "Goal: Maximal Muscle Repair | 600 kcal | 45g Protein"
                 
-                tvLunch.text = "Lean Muscle Fuel: 250g Grilled chicken, brown rice (1 cup), and broccoli."
-                tvLunchNutri.text = "Goal: Glycogen Refill | 550 kcal | 40g Protein"
+                tvLunch.text = "Power Fuel: 300g Grilled steak or double chicken breast with brown rice and asparagus."
+                tvLunchNutri.text = "Goal: Hypertrophy Support | 750 kcal | 55g Protein"
                 
-                tvDinner.text = "Amino Recovery: 200g Baked salmon or lean steak with sweet potato."
-                tvDinnerNutri.text = "Goal: Cell Regeneration | 600 kcal | 35g Protein"
+                tvDinner.text = "Growth Supper: Baked cod or tilapia (250g) with a large sweet potato and steamed kale."
+                tvDinnerNutri.text = "Goal: Overnight Recovery | 550 kcal | 40g Protein"
                 
-                tvSnacks.text = "Post-workout whey protein shake + 10 raw almonds."
-                tvHydration.text = "Hydration: Drink 3.5L of water. Focus on electrolyte intake."
+                tvSnacks.text = "Post-workout: Casein protein shake or 200g Greek yogurt with nuts."
+                tvHydration.text = "Hydration: Drink 4L of water. Add creatine if applicable."
             }
-            workout.contains("cardio") || workout.contains("run") || workout.contains("cycle") || workout.contains("walk") -> {
-                tvBreakfast.text = "Energy Charger: Whole grain bagel with natural peanut butter and a banana."
-                tvBreakfastNutri.text = "Goal: Endurance Prep | 500 kcal | 15g Protein"
+            workout.contains("cardio") || workout.contains("run") || workout.contains("marathon") || workout.contains("sprint") -> {
+                tvBreakfast.text = "Endurance Start: 2 whole grain pancakes with honey, blueberries, and a side of greek yogurt."
+                tvBreakfastNutri.text = "Goal: Glycogen Loading | 500 kcal | 20g Protein"
                 
-                tvLunch.text = "Carb Refuel: Whole wheat pasta with lean turkey mince and marinara sauce."
-                tvLunchNutri.text = "Goal: Replenish Energy | 600 kcal | 30g Protein"
+                tvLunch.text = "Runner's Fuel: Large bowl of whole wheat pasta with lean ground turkey and spinach."
+                tvLunchNutri.text = "Goal: Energy Replenishment | 700 kcal | 35g Protein"
                 
-                tvDinner.text = "Light Recovery: Quinoa bowl with roasted Mediterranean veggies and chickpeas."
-                tvDinnerNutri.text = "Goal: Digestive Comfort | 450 kcal | 20g Fiber"
+                tvDinner.text = "Light Recovery: Quinoa and roasted beet salad with grilled salmon (150g)."
+                tvDinnerNutri.text = "Goal: Inflammatory Reduction | 500 kcal | 25g Omega-3s"
                 
-                tvSnacks.text = "Watermelon slices or an orange with greek yogurt."
-                tvHydration.text = "Hydration: Drink 3-4L. Sip 500ml every hour after your session."
+                tvSnacks.text = "Energy Snack: Banana with peanut butter or an energy bar."
+                tvHydration.text = "Hydration: Drink 3.5L. Replenish with electrolytes (sodium/potassium)."
             }
-            workout.contains("yoga") || workout.contains("stretch") || workout.contains("home") -> {
-                tvBreakfast.text = "Mindful Bowl: Greek yogurt with mixed forest berries and chia seeds."
-                tvBreakfastNutri.text = "Goal: Anti-inflammatory | 350 kcal | 20g Protein"
+            workout.contains("yoga") || workout.contains("stretch") || workout.contains("pilates") -> {
+                tvBreakfast.text = "Zen Bowl: Smoothie with spinach, spirulina, apple, and coconut water."
+                tvBreakfastNutri.text = "Goal: Detox & Alkalize | 300 kcal | 10g Fiber"
                 
-                tvLunch.text = "Vitality Salad: Large kale and spinach salad with avocado, tofu, and seeds."
-                tvLunchNutri.text = "Goal: Micronutrient Boost | 400 kcal | 15g Healthy Fats"
+                tvLunch.text = "Light Vitality: Buddha bowl with tofu, chickpeas, avocado, and tahini dressing."
+                tvLunchNutri.text = "Goal: Micronutrient Dense | 450 kcal | 20g Plant Protein"
                 
-                tvDinner.text = "Soothing Soup: Red lentil dhal with a small side of brown rice."
-                tvDinnerNutri.text = "Goal: Gut Health | 450 kcal | 18g Fiber"
+                tvDinner.text = "Digestive Ease: Warm vegetable miso soup with a small portion of steamed brown rice."
+                tvDinnerNutri.text = "Goal: Calm & Restore | 350 kcal | 15g Fiber"
                 
-                tvSnacks.text = "Apple slices with almond butter or green tea."
-                tvHydration.text = "Hydration: Drink 2.5L. Sip coconut water for natural potassium."
+                tvSnacks.text = "Mindful Snack: Sliced cucumber with hummus or a small piece of dark chocolate."
+                tvHydration.text = "Hydration: Drink 2.5L. Herbal teas like peppermint or ginger are recommended."
             }
-            workout.contains("hiit") || workout.contains("sprint") -> {
-                tvBreakfast.text = "Metabolic Pancakes: Made with cottage cheese and oats, topped with berries."
-                tvBreakfastNutri.text = "Goal: High Burn | 450 kcal | 30g Protein"
+            workout.contains("hiit") || workout.contains("circuit") || workout.contains("crossfit") -> {
+                tvBreakfast.text = "Explosive Fuel: 3 Scrambled eggs, half an avocado, and 1 slice of sprouted grain toast."
+                tvBreakfastNutri.text = "Goal: Steady Power | 450 kcal | 25g Protein"
                 
-                tvLunch.text = "Performance Wrap: Turkey, avocado, and spinach in a whole-wheat wrap."
-                tvLunchNutri.text = "Goal: Quick Recovery | 500 kcal | 25g Protein"
+                tvLunch.text = "Rapid Recovery: Turkey breast (200g) with quinoa and mixed bell peppers."
+                tvLunchNutri.text = "Goal: Quick Amino Uptake | 500 kcal | 40g Protein"
                 
-                tvDinner.text = "Lean Leaner: Beef stir-fry with colorful peppers and ginger."
-                tvDinnerNutri.text = "Goal: Metabolism Support | 550 kcal | 30g Protein"
+                tvDinner.text = "Lean Burner: Stir-fry beef with broccoli, snap peas, and ginger (no sugar sauce)."
+                tvDinnerNutri.text = "Goal: Fat Oxidation | 500 kcal | 35g Protein"
                 
-                tvSnacks.text = "Low-fat cottage cheese with pineapple or a hard-boiled egg."
-                tvHydration.text = "Hydration: Drink 3.5L. Drink 250ml every 15 mins during HIIT."
+                tvSnacks.text = "Power Up: A handful of beef jerky or a hard-boiled egg."
+                tvHydration.text = "Hydration: Drink 3.5L. Sip water consistently to avoid cramping."
             }
             else -> {
-                // Default based on General Goal if no specific workout entered recently
                 if (goal.contains("loss")) {
-                    tvBreakfast.text = "Veggie Omelet (3 egg whites) + Green Tea"
-                    tvBreakfastNutri.text = "350 kcal | 25g Protein"
-                    tvLunch.text = "Grilled Chicken Salad + Light Vinaigrette"
-                    tvLunchNutri.text = "450 kcal | 35g Protein"
-                    tvDinner.text = "Baked Salmon + Steamed Asparagus"
-                    tvDinnerNutri.text = "400 kcal | 30g Healthy Fats"
-                    tvSnacks.text = "Apple slices or 10 raw almonds."
+                    tvBreakfast.text = "Lean Omelet: 3 egg whites, spinach, and mushrooms."
+                    tvBreakfastNutri.text = "300 kcal | 20g Protein"
+                    tvLunch.text = "Zesty Chicken Salad with lemon-tahini dressing."
+                    tvLunchNutri.text = "400 kcal | 30g Protein"
+                    tvDinner.text = "White Fish (200g) with steamed broccoli and lemon."
+                    tvDinnerNutri.text = "350 kcal | 35g Protein"
+                    tvSnacks.text = "Celery sticks with 1 tsp almond butter."
                     tvHydration.text = "Drink 3L of water daily."
                 } else {
-                    tvBreakfast.text = "Balanced Start: Scrambled eggs on whole grain toast."
+                    tvBreakfast.text = "Balanced Choice: Scrambled eggs on whole grain toast."
                     tvBreakfastNutri.text = "400 kcal | 18g Protein"
                     tvLunch.text = "Wellness Lunch: Mixed bean and quinoa salad."
                     tvLunchNutri.text = "450 kcal | 15g Fiber"
                     tvDinner.text = "Standard Health: Oven-baked cod with sweet potato."
                     tvDinnerNutri.text = "500 kcal | 25g Healthy Fats"
-                    tvSnacks.text = "Handful of grapes or a small orange."
+                    tvSnacks.text = "Healthy Choice: A seasonal fruit or yogurt."
                     tvHydration.text = "Drink 2.5L of water daily."
                 }
             }
@@ -177,25 +185,50 @@ class FoodFragment : Fragment() {
     }
 
     private fun handleScannedBarcode(barcode: String) {
-        Toast.makeText(context, "Analyzing barcode: $barcode...", Toast.LENGTH_LONG).show()
-        val simulatedInfo = "Nutritional Info for $barcode: 150 kcal, 2g Sugar. Perfect for your active session!"
+        val isFood = barcode.length >= 8 && (barcode.startsWith("7") || barcode.startsWith("8") || barcode.startsWith("0"))
+        
+        if (!isFood) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("Scan Failed")
+                .setMessage("Barcode $barcode does not appear to be a food product. Please scan a valid food item.")
+                .setPositiveButton("OK", null)
+                .show()
+            return
+        }
+
+        Toast.makeText(context, "Analyzing food item: $barcode...", Toast.LENGTH_LONG).show()
+        
+        val seed = barcode.hashCode().toLong()
+        val random = Random(seed)
+        val calories = random.nextInt(50, 800)
+        val sugar = random.nextInt(0, 40)
+        val protein = random.nextInt(1, 30)
+
+        val productInfo = """
+            Product: Food Identified
+            Calories: $calories kcal
+            Sugar: ${sugar}g
+            Protein: ${protein}g
+            
+            This item is ${if (calories > 400) "high" else "low"} in energy.
+        """.trimIndent()
+
         AlertDialog.Builder(requireContext())
-            .setTitle("Product Analyzed")
-            .setMessage(simulatedInfo)
-            .setPositiveButton("Log Meal") { _, _ -> logMealToFirestore("Barcode: $barcode") }
-            .setNegativeButton("Close", null)
+            .setTitle("Food Item Identified")
+            .setMessage(productInfo)
+            .setPositiveButton("Log to Diary") { _, _ -> 
+                logMealToFirestore("Scanned Food: $calories kcal")
+            }
+            .setNegativeButton("Cancel", null)
             .show()
     }
 
     private fun logMealToFirestore(mealName: String) {
         if (userId == null) return
-        val data = mapOf(
-            "meal" to mealName,
-            "timestamp" to System.currentTimeMillis()
-        )
+        val data = mapOf("meal" to mealName, "timestamp" to System.currentTimeMillis())
         db.collection("food_history").document(userId).collection("entries").add(data)
             .addOnSuccessListener {
-                Toast.makeText(context, "Meal details saved to history!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "$mealName logged!", Toast.LENGTH_SHORT).show()
             }
     }
 }

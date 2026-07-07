@@ -51,8 +51,11 @@ class LoginActivity : AppCompatActivity() {
             authMethod == SecurityHelper.AuthMethod.PASSWORD_BIOMETRIC || 
             authMethod == SecurityHelper.AuthMethod.PIN_BIOMETRIC) {
             btnBiometric.visibility = View.VISIBLE
-            // Prompt immediately only if Biometric was the *primary* choice
+            // Prompt immediately for pure biometric login
             if (authMethod == SecurityHelper.AuthMethod.BIOMETRIC) {
+                etEmail.visibility = View.GONE
+                etPassword.visibility = View.GONE
+                btnLogin.visibility = View.GONE
                 biometricPrompt.authenticate(promptInfo)
             }
         } else {

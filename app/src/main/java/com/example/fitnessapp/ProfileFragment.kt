@@ -183,7 +183,7 @@ class ProfileFragment : Fragment() {
                         startActivity(Intent(activity, LoginActivity::class.java))
                         activity?.finish()
                     } else {
-                        Toast.makeText(context, "Error: \${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "Error: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
