@@ -1,19 +1,17 @@
-plugins {id("com.google.gms.google-services")
+plugins {
     alias(libs.plugins.android.application)
+    id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.example.fitnessapp"
-    compileSdk {
-        version = release(36) {
-            minorApiLevel = 1
-        }
-    }
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.example.fitnessapp"
         minSdk = 26
-        targetSdk = 36
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -32,6 +30,9 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = "11"
     }
 }
 
@@ -59,7 +60,8 @@ dependencies {
     implementation(libs.androidx.health.connect)
     implementation(libs.androidx.work.runtime)
     implementation(libs.mlkit.barcode.scanning)
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation("com.github.bumptech.glide:glide:4.16.0")
+    implementation(libs.mp.android.chart)
+    implementation(libs.glide)
+    implementation(libs.guava)
+    implementation(libs.androidx.concurrent.futures)
 }
-
